@@ -1,0 +1,39 @@
+{
+  "name": "aliapp-console",
+  "version": "1.0.0",
+  "description": "支付宝小程序console日志工具组件",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"gulp\" \"npm run lint-fix\" \"npm run lint-watch\" ",
+    "build": "concurrently \"gulp\" \"npm run lint-fix\" \"gulp build\" ",
+    "lint-watch": "onchange \"src/**/*.js\" \"src/**/*.scss\" \"src/**/*.wxml\" \"src/**/*.axml\" \"src/**/*.json\" -e \"{miniprogram_npm,node_modules,src/**/*.skeleton.wxml,echarts.js}\" -- prettier --write {{changed}}",
+    "lint-fix": "prettier --write \"{src,template}/**/*.{js, scss, json, wxml, axml}\" ",
+    "gulp": "gulp"
+  },
+  "author": {
+    "name": "IceApriler",
+    "email": "qimengjie@163.com"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
+  "homepage": "https://github.com/IceApriler/aliapp-console",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/IceApriler/aliapp-console.git"
+  },
+  "devDependencies": {
+    "@mini-types/alipay": "^3.0.7",
+    "concurrently": "^5.1.0",
+    "fs-extra": "^5.0.0",
+    "gulp": "^4.0.2",
+    "gulp-if": "^3.0.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-sass": "^4.1.0",
+    "minimist": "^1.2.5",
+    "miniprogram-api-typings": "^3.4.6",
+    "node-sass": "^4.14.0",
+    "onchange": "^6.1.1",
+    "prettier": "2.0.5"
+  }
+}

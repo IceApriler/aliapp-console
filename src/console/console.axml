@@ -1,0 +1,151 @@
+<view class="console-wrap">
+  <view class="inner-wrap" hidden="{{!showDebug}}">
+    <!-- console,request,localStorage -->
+    <scroll-view class="header-menu-list" scroll-x="{{true}}">
+      <view
+        class="menu-item {{ currentMenuItem.value === item.value ? 'current' : '' }}"
+        a:for="{{menuList}}"
+        data-item="{{item}}"
+        onTap="selectMenu"
+        >{{ item.label }}</view
+      >
+    </scroll-view>
+    <!-- all,log,info,warn,error -->
+    <scroll-view class="header-sub-menu-list" scroll-x="{{true}}">
+      <view
+        class="menu-item {{ currentMenuItem.subMenuValue === item.value ? 'current' : '' }}"
+        a:for="{{subMenuList}}"
+        data-item="{{item}}"
+        onTap="selectSubMenu"
+        >{{ item.label }}</view
+      >
+    </scroll-view>
+    <scroll-view
+      class="console-list"
+      scroll-x="{{true}}"
+      scroll-y="{{true}}"
+      a:if="{{currentMenuItem.value === 'console'}}"
+    >
+      <view class="item {{item.fnType}}" :class="" a:for="{{ filteredLogs }}">
+        <console-comp-item item="{{item}}"></console-comp-item>
+      </view>
+    </scroll-view>
+    <scroll-view
+      class="console-list"
+      scroll-y="{{true}}"
+      a:if="{{currentMenuItem.value === 'request'}}"
+    >
+      <view
+        class="request-list-full"
+        a:if="{{currentMenuItem.subMenuValue === 'full'}}"
+      >
+        <view class="item {{item.fnType}}" a:for="{{ filteredRequestLogs }}">
+          <console-comp-item item="{{item}}"></console-comp-item>
+        </view>
+      </view>
+      <view
+        class="request-list-brief"
+        a:if="{{currentMenuItem.subMenuValue === 'brief'}}"
+      >
+        <view
+          class="request-list-brief-item triangle {{item.fnType}} {{item.showDetail ? 'isOpenDetail' : '' }}"
+          a:for="{{ filteredRequestLogsBrief }}"
+        >
+          <view
+            class="request-list-brief-item-title"
+            data-item="{{item}}"
+            onTap="briefShowDetail"
+          >
+            <view class="cell">
+              <console-comp-item item="{{item.method}}"></console-comp-item>
+            </view>
+            <view class="cell">
+              <console-comp-item item="{{item.statusCode}}"></console-comp-item>
+            </view>
+            <view class="cell">
+              <console-comp-item item="{{item.urlName}}"></console-comp-item>
+            </view>
+          </view>
+          <view class="brief-item-row urlName" hidden="{{!item.showDetail}}">
+            <view class="key">urlName</view>
+            <view class="value">
+              <console-comp-item item="{{item.urlName}}"></console-comp-item>
+            </view>
+          </view>
+          <view class="brief-item-row statusCode" hidden="{{!item.showDetail}}">
+            <view class="key">statusCode</view>
+            <view class="value">
+              <console-comp-item item="{{item.statusCode}}"></console-comp-item>
+            </view>
+          </view>
+          <view class="brief-item-row method" hidden="{{!item.showDetail}}">
+            <view class="key">method</view>
+            <view class="value">
+              <console-comp-item item="{{item.method}}"></console-comp-item>
+            </view>
+          </view>
+          <view class="brief-item-row params" hidden="{{!item.showDetail}}">
+            <view class="key">params</view>
+            <view class="value">
+              <console-comp-item item="{{item.params}}"></console-comp-item>
+            </view>
+          </view>
+          <view
+            class="brief-item-row responseData"
+            hidden="{{!item.showDetail}}"
+          >
+            <view class="key">response</view>
+            <view class="value">
+              <console-comp-item
+                item="{{item.responseData}}"
+              ></console-comp-item>
+            </view>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+    <scroll-view
+      class="console-list"
+      scroll-y="{{true}}"
+      a:if="{{currentMenuItem.value === 'localStorage'}}"
+    >
+      <view
+        class="item storage-item {{item.fnType}}"
+        :class=""
+        a:for="{{ filteredLocalStorageLogs }}"
+      >
+        <view class="key">{{ item.key }}</view>
+        <view class="value">
+          <console-comp-item item="{{item}}"></console-comp-item>
+        </view>
+      </view>
+    </scroll-view>
+    <view class="inner-bottom">
+      <view class="search-wrap">
+        <view class="input-wrap">
+          <input
+            type="text"
+            placeholder="请输入文本进行搜索和过滤"
+            data-field="filterText"
+            onInput="onInput"
+          />
+        </view>
+      </view>
+      <view class="toggle-wrap">
+        <view class="button" onTap="clearLogs">清空日志</view>
+        <view class="button" onTap="toggleShowConsoleList">隐藏</view>
+      </view>
+    </view>
+  </view>
+  <view
+    class="console-button"
+    style="{{consoleButtonStyle}}"
+    ref="consoleButton"
+    hidden="{{showDebug}}"
+    onTap="toggleShowConsoleList"
+    onTouchMove="touchmove"
+    onTouchStart="touchstart"
+    onTouchEnd="touchend"
+    >调试</view
+  >
+</view>
