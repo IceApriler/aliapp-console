@@ -1,4 +1,4 @@
-import { initConsole } from '../src/utils/console'
+import { initConsole } from './aliapp-console/utils/console'
 
 App({
   globalData: {},
@@ -10,6 +10,9 @@ App({
   ],
 
   userInfo: null,
+  aliConsole: {
+    visible: true,
+  },
 
   onLaunch() {
     this.globalData.logsStore = initConsole({
@@ -19,27 +22,27 @@ App({
 
   getUserInfo() {
     return new Promise((resolve, reject) => {
-      if (this.userInfo) resolve(this.userInfo);
+      if (this.userInfo) resolve(this.userInfo)
 
       my.getAuthCode({
         scopes: ['auth_user'],
-        success: authcode => {
-          console.info(authcode);
+        success: (authcode) => {
+          console.info(authcode)
 
           my.getAuthUserInfo({
-            success: res => {
-              this.userInfo = res;
-              resolve(this.userInfo);
+            success: (res) => {
+              this.userInfo = res
+              resolve(this.userInfo)
             },
             fail: () => {
-              reject({});
+              reject({})
             },
-          });
+          })
         },
         fail: () => {
-          reject({});
+          reject({})
         },
-      });
-    });
+      })
+    })
   },
-});
+})

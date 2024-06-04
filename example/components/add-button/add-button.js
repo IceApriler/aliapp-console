@@ -6,7 +6,7 @@ Component({
 
   methods: {
     onClickMe() {
-      this.props.onClickMe();
+      this.props.onClickMe()
     },
   },
-});
+})

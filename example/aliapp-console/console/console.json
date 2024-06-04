@@ -1,0 +1,6 @@
+{
+  "component": true,
+  "usingComponents": {
+    "console-item": "../console-item/console-item"
+  }
+}

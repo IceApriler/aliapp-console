@@ -1,11 +1,11 @@
 {
-  "pages": [
-    "pages/todos/todos",    
-    "pages/add-todo/add-todo"
-  ],
+  "pages": ["pages/todos/todos", "pages/add-todo/add-todo"],
   "window": {
     "defaultTitle": "Todo App",
     "titleBarColor": "#323239"
+  },
+  "usingComponents": {
+    "console-view": "/aliapp-console/console-view/console-view"
   },
   "behavior": {
     "requestReferrerStrategy": "page"

@@ -1,4 +1,4 @@
-const app = getApp();
+const app = getApp()
 
 Page({
   data: {
@@ -8,7 +8,7 @@ Page({
   onBlur(e) {
     this.setData({
       inputValue: e.detail.value,
-    });
+    })
   },
 
   add() {
@@ -17,8 +17,8 @@ Page({
         text: this.data.inputValue,
         compeleted: false,
       },
-    ]);
+    ])
 
-    my.navigateBack();
+    my.navigateBack()
   },
-});
+})

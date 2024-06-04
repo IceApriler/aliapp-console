@@ -1,0 +1,29 @@
+<view class="console-item-wrap">
+  <view
+    class="label {{item.type}} {{isArrayOrObject ? 'triangle' : ''}} {{showDetail ? 'isOpenDetail' : ''}} {{isLight ? 'isLight' : ''}}"
+    data-item="{{item}}"
+    onTap="toggleShowDetail"
+    onTouchStart="touchstart"
+    onTouchMove="touchmove"
+    onLongTap="longpress"
+    >{{ item.label + '' }}</view
+  >
+  <!-- 数组和对象，可以展开 -->
+  <scroll-view
+    class="detail"
+    scroll-x="{{true}}"
+    a:if="{{isArrayOrObject && showDetail}}"
+  >
+    <view
+      class="detail-item"
+      a:for="{{list}}"
+      a:for-item="deItem"
+      a:for-index="deIdx"
+    >
+      <view class="key">{{ deItem.key }}:</view>
+      <view class="value-item">
+        <console-item item="{{deItem}}" level="{{level + 1}}"></console-item>
+      </view>
+    </view>
+  </scroll-view>
+</view>
