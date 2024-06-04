@@ -1,6 +1,5 @@
 .DS_Store
 node_modules
-.vscode
 project.private.config*
 .mini-ide
 package-lock.json

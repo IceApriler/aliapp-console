@@ -7,6 +7,7 @@ const minimist = require('minimist')
 const child_process = require('child_process')
 const config = require('./gulp.config')
 const utils = require('./gulp.utils')
+const watch = require('gulp-watch')
 
 sass.compiler = require('node-sass')
 
@@ -22,11 +23,32 @@ gulp.task('compile:scss', function () {
     )
     .pipe(gulp.dest(config.srcPath))
 })
+/** 编译scss文件 */
+gulp.task('compile:examplescss', function () {
+  return gulp
+    .src([utils.makeGlob(config.exampleScssPath), '!' + utils.makeGlob(config.exampleAliappConsolePath)])
+    .pipe(sass().on('error', sass.logError))
+    .pipe(
+      rename((path) => {
+        path.extname = '.acss'
+      }),
+    )
+    .pipe(gulp.dest(config.examplePath))
+})
 
 /** 监听scss */
 gulp.task('watch:scss', function (done) {
-  gulp.watch(utils.makeGlob(config.scssPath), gulp.series('compile:scss'))
+  watch(utils.makeGlob(config.scssPath), gulp.series('compile:scss'))
+  watch(utils.makeGlob(config.exampleScssPath), gulp.series('compile:examplescss'))
   done()
+})
+
+gulp.task('copy:comp', function () {
+  return gulp.src(utils.makeGlob(config.aliappConsolePath)).pipe(gulp.dest(utils.makeGlob(config.exampleAliappConsolePath)))
+})
+
+gulp.task('watch:comp', function () {
+  watch(utils.makeGlob(config.aliappConsolePath), gulp.series('copy:comp'))
 })
 
 /** 修改app.json */
@@ -72,4 +94,4 @@ function exec(cmd) {
 }
 
 /** 开发模式 */
-gulp.task('default', gulp.series('compile:scss', 'watch:scss'))
+gulp.task('default', gulp.series('compile:scss', 'compile:examplescss', 'copy:comp', 'watch:scss', 'watch:comp'))

@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "concurrently \"gulp\" \"npm run lint-fix\" \"npm run lint-watch\" ",
     "build": "concurrently \"gulp\" \"npm run lint-fix\" \"gulp build\" ",
-    "lint-watch": "onchange \"src/**/*.js\" \"src/**/*.scss\" \"src/**/*.wxml\" \"src/**/*.axml\" \"src/**/*.json\" -e \"{miniprogram_npm,node_modules,src/**/*.skeleton.wxml,echarts.js}\" -- prettier --write {{changed}}",
-    "lint-fix": "prettier --write \"{src,template}/**/*.{js, scss, json, wxml, axml}\" ",
+    "lint-watch": "onchange \"{src,template,example}/**/*.js\" \"{src,template,example}/**/*.scss\" \"{src,template,example}/**/*.wxml\" \"{src,template,example}/**/*.axml\" \"{src,template,example}/**/*.json\" -e \"{miniprogram_npm,node_modules,src/**/*.skeleton.wxml,echarts.js}\" -- prettier --write {{changed}}",
+    "lint-fix": "prettier --write \"{src,template,example}/**/*.{js,scss,json,wxml,axml}\" ",
     "gulp": "gulp"
   },
   "author": {
@@ -30,6 +30,7 @@
     "gulp-if": "^3.0.0",
     "gulp-rename": "^1.2.2",
     "gulp-sass": "^4.1.0",
+    "gulp-watch": "^5.0.1",
     "minimist": "^1.2.5",
     "miniprogram-api-typings": "^3.4.6",
     "node-sass": "^4.14.0",

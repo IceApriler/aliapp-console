@@ -1,0 +1,5 @@
+{
+  "files.exclude": {
+    "example/aliapp-console": true,
+  },
+}

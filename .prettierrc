@@ -5,13 +5,13 @@
   "trailingComma": "all",
   "overrides": [
     {
-      "files": "src/**/*.axml",
+      "files": "{src,template,example}/**/*.axml",
       "options": {
         "parser": "html"
       }
     },
     {
-      "files": "src/**/*.wxml",
+      "files": "{src,template,example}/**/*.wxml",
       "options": {
         "parser": "html"
       }
