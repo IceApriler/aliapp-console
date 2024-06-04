@@ -22,10 +22,7 @@
     >
       <view class="key">{{ deItem.key }}:</view>
       <view class="value-item">
-        <console-item
-          item="{{deItem}}"
-          level="{{level + 1}}"
-        ></console-item>
+        <console-item item="{{deItem}}" level="{{level + 1}}"></console-item>
       </view>
     </view>
   </scroll-view>

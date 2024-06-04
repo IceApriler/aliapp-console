@@ -205,7 +205,6 @@ Component({
         filterText: '',
         showDebug: !this.data.showDebug,
       })
-      console.log('this.data.showDebug', this.data.showDebug)
       if (this.data.showDebug) {
         // 每次展开的时候，同步一下数据
         this.asyncData()

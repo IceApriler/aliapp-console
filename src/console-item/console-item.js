@@ -53,7 +53,6 @@ Component({
         this.setData({
           list: convertObject(this.props.item.value),
         })
-        console.log(this.data.list)
       }
       this.setData({
         showDetail: !this.data.showDetail,

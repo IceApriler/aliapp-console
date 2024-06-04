@@ -1,6 +1,6 @@
 {
   "component": true,
   "usingComponents": {
-    "console-comp-item": "./console-comp-item/console-comp-item"
+    "console-item": "../console-item/console-item"
   }
 }
