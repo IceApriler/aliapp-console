@@ -1,4 +1,4 @@
-import { initConsole } from './aliapp-console/utils/console'
+import { initConsole } from './aliapp-console'
 
 App({
   globalData: {},
@@ -10,13 +10,11 @@ App({
   ],
 
   userInfo: null,
-  aliConsole: {
-    visible: true,
-  },
 
   onLaunch() {
-    this.globalData.logsStore = initConsole({
-      openDebug: true,
+    this.aliAppLogsStore = initConsole({
+      open: true,
+      defaultVisible: true,
     })
   },
 

@@ -1,20 +1,70 @@
-import { makeLabel, strTrim, deepCopy, customStringify } from './utils.js'
+import {
+  makeLabel,
+  strTrim,
+  deepCopy,
+  customStringify,
+  getCurrentTime,
+} from './utils.js'
+
 let _log = console.log
 let _info = console.info
 let _error = console.error
 let _warn = console.warn
 let _request = my.request
 
-let consoleConfig = {}
+let _timeoutId
+
+export let consoleConfig = {
+  /** 是否开启，默认关闭 */
+  open: false,
+  /** 是否显示左下角的调试按钮，默认隐藏 */
+  defaultVisible: false,
+  /** 控制台日志配置 */
+  consoleMaxLength: 100,
+  /** 请求日志配置 */
+  requestMaxLength: 50,
+}
 export const logsStore = {
   consoleLogs: [],
   requestLogs: [],
 }
 
+function fillLastLogsStore() {
+  const lastLogsStore = my.getStorageSync({ key: 'lastLogsStore' }).data
+  if (lastLogsStore) {
+    logsStore.consoleLogs = lastLogsStore.consoleLogs || []
+    logsStore.requestLogs = lastLogsStore.requestLogs || []
+
+    console.light(`以上为上次打开的日志记录 ${getCurrentTime()}`)
+    console.reqLight(
+      `以上为上次打开的日志记录 ${getCurrentTime()}`,
+      {
+        method: '分割线',
+        data: '分割线',
+      },
+      '',
+      { status: '分割线', data: '分割线' },
+    )
+  }
+}
+
+function saveStorage() {
+  my.setStorage({
+    key: 'lastLogsStore',
+    data: logsStore,
+    success: (res) => {
+      _log('setStorage success', res)
+    },
+    fail: (error) => {
+      _error('setStorage failed: ', JSON.stringify(error))
+    },
+  })
+}
+
 function print(fnType, sourceLogArr) {
   try {
     // 判断是否是关闭调试状态
-    if (!consoleConfig.openDebug) return
+    if (!consoleConfig.open) return
 
     let formatLogArr
 
@@ -27,8 +77,8 @@ function print(fnType, sourceLogArr) {
       value: formatLogArr,
       type: 'array',
     })
-    // 最多保存100条
-    const maxLength = 100
+    // 最多保存条数
+    const maxLength = consoleConfig.consoleMaxLength || 100
     if (consoleLogs.length > maxLength) {
       logsStore.consoleLogs = consoleLogs.splice(
         consoleLogs.length - maxLength,
@@ -37,6 +87,12 @@ function print(fnType, sourceLogArr) {
     } else {
       logsStore.consoleLogs = consoleLogs
     }
+
+    clearTimeout(_timeoutId)
+
+    _timeoutId = setTimeout(() => {
+      saveStorage()
+    }, 1000)
   } catch (error) {
     console.error('print error', error)
   }
@@ -44,7 +100,7 @@ function print(fnType, sourceLogArr) {
 function requestPrint(fnType, e) {
   try {
     // 判断是否是关闭调试状态
-    if (!consoleConfig.openDebug) return
+    if (!consoleConfig.open) return
 
     const { requestLogs = [] } = logsStore
     const requestId = Date.now()
@@ -55,8 +111,8 @@ function requestPrint(fnType, e) {
       type: 'array',
       requestId,
     })
-    // 最多保存50条
-    const maxLength = 50
+    // 最多保存条数
+    const maxLength = consoleConfig.requestMaxLength || 50
     if (requestLogs.length > maxLength) {
       logsStore.requestLogs = requestLogs.splice(
         requestLogs.length - maxLength,
@@ -71,7 +127,10 @@ function requestPrint(fnType, e) {
   }
 }
 export const initConsole = (config = {}) => {
-  consoleConfig = config
+  consoleConfig = {
+    ...consoleConfig,
+    ...config,
+  }
   console.log = function (...argArr) {
     _log(...argArr)
     print('log', JSON.parse(customStringify(argArr)))
@@ -79,6 +138,10 @@ export const initConsole = (config = {}) => {
   console.info = function (...argArr) {
     _info(...argArr)
     print('info', JSON.parse(customStringify(argArr)))
+  }
+  console.light = function (...argArr) {
+    _info(...argArr)
+    print('light', JSON.parse(customStringify(argArr)))
   }
   console.error = function (...argArr) {
     _error(...argArr)
@@ -95,6 +158,12 @@ export const initConsole = (config = {}) => {
   console.req = function (...str) {
     return requestPrint('log', JSON.parse(customStringify(str)))
   }
+  console.reqLight = function (...str) {
+    return requestPrint('light', JSON.parse(customStringify(str)))
+  }
+
+  // 填充上一次的日志
+  fillLastLogsStore()
 
   console.warn('console已劫持')
   // console.warn('如遇页面卡死，请先排查[*.wxs]文件下是否有console并移除')
@@ -102,7 +171,7 @@ export const initConsole = (config = {}) => {
   my.request = function (reqConfig) {
     try {
       // 判断是否是关闭调试状态
-      if (!consoleConfig.openDebug) return _request(reqConfig)
+      if (!consoleConfig.open) return _request(reqConfig)
 
       const _reqConfig = deepCopy(reqConfig)
       delete _reqConfig.success
@@ -143,3 +212,15 @@ export const initConsole = (config = {}) => {
 
   return logsStore
 }
+
+const onAppShowHandler = (res) => {
+  console.log('监听小程序切前台事件 onAppShow:', res)
+}
+
+my.onAppShow(onAppShowHandler)
+
+const onAppHideHandler = () => {
+  console.log('监听切换到后台方法 onAppHide:')
+}
+
+my.onAppHide(onAppHideHandler)

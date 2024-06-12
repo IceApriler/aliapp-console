@@ -17,6 +17,11 @@ Page({
         // 获取用户信息失败
       },
     )
+
+    setTimeout(() => {
+      console.warn('发送请求')
+      this.request()
+    }, 2000)
   },
   // 监听生命周期回调 onShow
   onShow() {
@@ -37,5 +42,20 @@ Page({
   addTodo() {
     // 进行页面跳转
     my.navigateTo({ url: '../add-todo/add-todo' })
+  },
+
+  request() {
+    my.request({
+      url: 'https://alibaba.com/test',
+      data: {},
+      headers: {
+        'content-type': 'application/json',
+        accessToken: '123',
+        channel: '8',
+      },
+      method: 'POST',
+      success: (res) => {},
+      fail: (err) => {},
+    })
   },
 })

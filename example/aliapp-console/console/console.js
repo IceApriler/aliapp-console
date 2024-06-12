@@ -80,14 +80,13 @@ Component({
   didMount() {
     this.setData({
       currentMenuItem: this.data.currentMenuItem,
-      consoleButtonStyle: app.globalData.logsStore.consoleButtonStyle || '',
+      consoleButtonStyle: app.aliAppLogsStore.consoleButtonStyle || '',
     })
   },
   didUnmount() {},
   methods: {
     asyncData() {
-      const { logsStore } = app.globalData
-      const { consoleLogs, requestLogs } = logsStore
+      const { consoleLogs, requestLogs } = app.aliAppLogsStore
       this.setData({
         consoleLogs: [...consoleLogs], // 需要展开，不然模拟器会报错
         requestLogs: [...requestLogs],
@@ -99,10 +98,10 @@ Component({
           case 'console':
             return [
               { label: 'All', value: 'all' },
-              { label: 'log', value: 'log' },
-              { label: 'info', value: 'info' },
-              { label: 'warn', value: 'warn' },
-              { label: 'error', value: 'error' },
+              { label: 'Log', value: 'log' },
+              { label: 'Info', value: 'info' },
+              { label: 'Warn', value: 'warn' },
+              { label: 'Error', value: 'error' },
             ]
           case 'request':
             return [
@@ -243,13 +242,13 @@ Component({
     clearLogs() {
       switch (this.data.currentMenuItem.value) {
         case 'console':
-          app.globalData.logsStore.consoleLogs = []
+          app.aliAppLogsStore.consoleLogs = []
           this.setData({
             consoleLogs: [],
           })
           break
         case 'request':
-          app.globalData.logsStore.requestLogs = []
+          app.aliAppLogsStore.requestLogs = []
           this.setData({
             requestLogs: [],
           })
@@ -314,7 +313,7 @@ Component({
       this.setData({
         consoleButtonStyle,
       })
-      app.globalData.logsStore.consoleButtonStyle = consoleButtonStyle
+      app.aliAppLogsStore.consoleButtonStyle = consoleButtonStyle
     },
     touchend(e) {},
   },

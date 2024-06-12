@@ -67,25 +67,25 @@
             </view>
           </view>
           <view class="brief-item-row urlName" hidden="{{!item.showDetail}}">
-            <view class="key">urlName</view>
+            <view class="key">UrlName</view>
             <view class="value">
               <console-item item="{{item.urlName}}"></console-item>
             </view>
           </view>
           <view class="brief-item-row statusCode" hidden="{{!item.showDetail}}">
-            <view class="key">statusCode</view>
+            <view class="key">StatusCode</view>
             <view class="value">
               <console-item item="{{item.statusCode}}"></console-item>
             </view>
           </view>
           <view class="brief-item-row method" hidden="{{!item.showDetail}}">
-            <view class="key">method</view>
+            <view class="key">Method</view>
             <view class="value">
               <console-item item="{{item.method}}"></console-item>
             </view>
           </view>
           <view class="brief-item-row params" hidden="{{!item.showDetail}}">
-            <view class="key">params</view>
+            <view class="key">Params</view>
             <view class="value">
               <console-item item="{{item.params}}"></console-item>
             </view>
@@ -94,7 +94,7 @@
             class="brief-item-row responseData"
             hidden="{{!item.showDetail}}"
           >
-            <view class="key">response</view>
+            <view class="key">Response</view>
             <view class="value">
               <console-item item="{{item.responseData}}"></console-item>
             </view>

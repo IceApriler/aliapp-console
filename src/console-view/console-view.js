@@ -1,12 +1,10 @@
-const app = getApp()
+import { consoleConfig } from '../index.js'
 
 Component({
   /**
    * 组件的属性列表
    */
-  props: {
-    background: '#5582fa',
-  },
+  props: {},
 
   /**
    * 组件的初始数据
@@ -17,11 +15,8 @@ Component({
 
   didMount() {
     this.setData({
-      visible: app.aliConsole ? app.aliConsole.visible : false,
+      visible: consoleConfig.defaultVisible || false,
     })
-    if (app.aliConsole) {
-      app.aliConsole.self = this
-    }
   },
   methods: {
     setVisible(visible) {

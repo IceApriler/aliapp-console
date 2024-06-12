@@ -4,7 +4,7 @@ import {
   deepCopy,
   customStringify,
   getCurrentTime,
-} from './utils.js'
+} from './utils/utils.js'
 
 let _log = console.log
 let _info = console.info

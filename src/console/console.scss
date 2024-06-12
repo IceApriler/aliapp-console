@@ -63,6 +63,10 @@
           background: rgba(55, 153, 242, 0.08);
           color: #3598f6;
         }
+        &.light {
+          background: linear-gradient(180deg, #46d841 0%, #19b84d 100%);
+          color: #fff;
+        }
         &.storage-item {
           display: flex;
           .key {
@@ -98,6 +102,10 @@
         &.info {
           background: rgba(55, 153, 242, 0.08);
           color: #3598f6;
+        }
+        &.light {
+          background: linear-gradient(180deg, #46d841 0%, #19b84d 100%);
+          color: #fff;
         }
         .request-list-brief-item-title {
           display: flex;
