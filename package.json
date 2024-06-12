@@ -2,14 +2,18 @@
   "name": "aliapp-console",
   "version": "1.0.0",
   "description": "支付宝小程序console日志工具组件",
-  "main": "index.js",
   "scripts": {
-    "dev": "concurrently \"gulp\" \"npm run lint-fix\" \"npm run lint-watch\" ",
+    "dev": "concurrently \"gulp\" \"npm run lint-fix\" \"gulp watch\" \"npm run lint-watch\" ",
     "build": "concurrently \"gulp\" \"npm run lint-fix\" \"gulp build\" ",
     "lint-watch": "onchange \"{src,template,example}/**/*.js\" \"{src,template,example}/**/*.scss\" \"{src,template,example}/**/*.wxml\" \"{src,template,example}/**/*.axml\" \"{src,template,example}/**/*.json\" -e \"{miniprogram_npm,node_modules,src/**/*.skeleton.wxml,echarts.js}\" -- prettier --write {{changed}}",
     "lint-fix": "prettier --write \"{src,template,example}/**/*.{js,scss,json,wxml,axml}\" ",
-    "gulp": "gulp"
+    "gulp": "gulp",
+    "prepare": "npm run build"
   },
+  "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
   "author": {
     "name": "IceApriler",
     "email": "qimengjie@163.com"
@@ -23,13 +27,17 @@
     "url": "https://github.com/IceApriler/aliapp-console.git"
   },
   "devDependencies": {
+    "@babel/core": "^7.24.7",
+    "@babel/preset-env": "^7.24.7",
     "@mini-types/alipay": "^3.0.7",
     "concurrently": "^5.1.0",
     "fs-extra": "^5.0.0",
     "gulp": "^4.0.2",
+    "gulp-babel": "^8.0.0",
     "gulp-if": "^3.0.0",
     "gulp-rename": "^1.2.2",
     "gulp-sass": "^4.1.0",
+    "gulp-sourcemaps": "^3.0.0",
     "gulp-watch": "^5.0.1",
     "minimist": "^1.2.5",
     "miniprogram-api-typings": "^3.4.6",

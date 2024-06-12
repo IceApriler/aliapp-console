@@ -3,6 +3,8 @@ node_modules
 project.private.config*
 .mini-ide
 package-lock.json
+aliapp-console-*
+dist
 
 # 生成的文件
 *.wxss
