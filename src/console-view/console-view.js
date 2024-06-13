@@ -1,6 +1,9 @@
 import { consoleConfig } from '../index.js'
 
 Component({
+  options: {
+    virtualHost: false,
+  },
   /**
    * 组件的属性列表
    */

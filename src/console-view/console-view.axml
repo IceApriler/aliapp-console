@@ -1,4 +1,2 @@
-<view class="console-view">
-  <slot></slot>
-</view>
+<slot></slot>
 <console a:if="{{ visible }}"></console>
