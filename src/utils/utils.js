@@ -185,34 +185,65 @@ export function getCurrentTime() {
   return formattedTime
 }
 
-export function storeLargeData(key, data) {
-  const maxChunkSize = 180 * 1024 // 180k
-  const jsonData = customStringify(data)
+/**
+ *
+ * @param {String} key
+ * @param {Array} newData
+ * @param {Number} maxSize 按一个汉字占3个字节估算，上限1M，则1024 / 3 * 1024 = 340 * 1024
+ */
+export function storeDataWithLimit(key, newData = [], maxSize = 340 * 1024) {
+  let storedData = retrieveLargeData(key) || []
+  const maxChunkSize = 60 * 1024 // 按一个汉字占3个字节估算，60 * 3 = 180k
+
+  // 添加新的数据
+  storedData = storedData.concat(newData)
+
+  // 将数据序列化为字符串
+  let jsonData = customStringify(storedData)
+
+  // 如果总数据量超过maxSize，移除旧数据
+  while (jsonData.length > maxSize) {
+    storedData.shift() // 删除最旧的数据
+    jsonData = customStringify(storedData) // 重新计算大小
+  }
+
+  // 清除旧的分片数据
+  const meta = my.getStorageSync({ key: `${key}_meta` }).data
+  if (meta) {
+    for (let i = 0; i < meta.totalChunks; i++) {
+      my.removeStorageSync({ key: `${key}_chunk_${i}` })
+    }
+  }
+
+  // 重新存储数据
   const totalLength = jsonData.length
   const numChunks = Math.ceil(totalLength / maxChunkSize)
-
   for (let i = 0; i < numChunks; i++) {
     const chunk = jsonData.slice(i * maxChunkSize, (i + 1) * maxChunkSize)
     my.setStorage({
       key: `${key}_chunk_${i}`,
       data: chunk,
+      fail: (e) => {
+        console.error(e, { totalLength, numChunks, chunk })
+      },
     })
   }
 
-  // 存储元数据
   my.setStorage({
     key: `${key}_meta`,
     data: {
       key: key,
+      totalStrLength: totalLength,
+      storedDataLength: storedData.length,
+      newStoredDataLength: newData.length,
       totalChunks: numChunks,
     },
   })
 }
 
-function retrieveLargeData(key) {
+export function retrieveLargeData(key) {
   const meta = my.getStorageSync({ key: `${key}_meta` }).data
   if (!meta) {
-    console.error('No metadata found for key:', key)
     return null
   }
 
@@ -222,71 +253,6 @@ function retrieveLargeData(key) {
   for (let i = 0; i < totalChunks; i++) {
     const chunk = my.getStorageSync({ key: `${key}_chunk_${i}` }).data
     if (chunk === null) {
-      console.error('Missing chunk:', i)
-      return null
-    }
-    jsonData += chunk
-  }
-
-  return JSON.parse(jsonData)
-}
-
-function storeDataWithLimit(key, newData, maxSize = 1 * 1024 * 1024) {
-  let storedData = retrieveLargeData(key) || []
-  const maxChunkSize = 200 * 1024 // 200k per chunk
-
-  // 添加新的数据
-  storedData = storedData.concat(newData)
-
-  // 将数据序列化为字符串
-  let jsonData = JSON.stringify(storedData)
-
-  // 如果总数据量超过maxSize，移除旧数据
-  while (jsonData.length > maxSize) {
-    storedData.shift() // 删除最旧的数据
-    jsonData = JSON.stringify(storedData) // 重新计算大小
-  }
-
-  // 清除旧的分片数据
-  const meta = JSON.parse(localStorage.getItem(`${key}_meta`))
-  if (meta) {
-    for (let i = 0; i < meta.totalChunks; i++) {
-      localStorage.removeItem(`${key}_chunk_${i}`)
-    }
-  }
-
-  // 重新存储数据
-  const totalLength = jsonData.length
-  const numChunks = Math.ceil(totalLength / maxChunkSize)
-  for (let i = 0; i < numChunks; i++) {
-    const chunk = jsonData.slice(i * maxChunkSize, (i + 1) * maxChunkSize)
-    localStorage.setItem(`${key}_chunk_${i}`, chunk)
-  }
-
-  // 存储元数据
-  localStorage.setItem(
-    `${key}_meta`,
-    JSON.stringify({
-      key: key,
-      totalChunks: numChunks,
-    }),
-  )
-}
-
-function retrieveLargeData(key) {
-  const meta = JSON.parse(localStorage.getItem(`${key}_meta`))
-  if (!meta) {
-    console.error('No metadata found for key:', key)
-    return null
-  }
-
-  const { totalChunks } = meta
-  let jsonData = ''
-
-  for (let i = 0; i < totalChunks; i++) {
-    const chunk = localStorage.getItem(`${key}_chunk_${i}`)
-    if (chunk === null) {
-      console.error('Missing chunk:', i)
       return null
     }
     jsonData += chunk

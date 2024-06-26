@@ -4,6 +4,8 @@ import {
   deepCopy,
   customStringify,
   getCurrentTime,
+  storeDataWithLimit,
+  retrieveLargeData,
 } from './utils/utils.js'
 
 let _log = console.log
@@ -12,6 +14,13 @@ let _error = console.error
 let _warn = console.warn
 let _request = my.request
 
+my._console = {
+  _log,
+  _info,
+  _error,
+  _warn,
+  _request,
+}
 let _timeoutId
 
 export let consoleConfig = {
@@ -20,9 +29,11 @@ export let consoleConfig = {
   /** 是否显示左下角的调试按钮，默认隐藏 */
   defaultVisible: false,
   /** 控制台日志配置 */
-  consoleMaxLength: 100,
+  consoleMaxLength: 200,
   /** 请求日志配置 */
   requestMaxLength: 50,
+  /** 是否允许日志缓存（仅支持日志，不支持请求） */
+  allowLogsCache: false,
 }
 export const logsStore = {
   consoleLogs: [],
@@ -30,10 +41,12 @@ export const logsStore = {
 }
 
 function fillLastLogsStore() {
-  const lastLogsStore = my.getStorageSync({ key: 'lastLogsStore' }).data
-  if (lastLogsStore) {
-    logsStore.consoleLogs = lastLogsStore.consoleLogs || []
-    logsStore.requestLogs = lastLogsStore.requestLogs || []
+  const CacheConsoleLogs = retrieveLargeData('CacheConsoleLogs') || []
+  // const CacheRequestLogs = retrieveLargeData('CacheRequestLogs') || []
+
+  if (CacheConsoleLogs && CacheConsoleLogs.length) {
+    logsStore.consoleLogs = CacheConsoleLogs
+    // logsStore.requestLogs = CacheRequestLogs
 
     console.light(`以上为上次打开的日志记录 ${getCurrentTime()}`)
     console.reqLight(
@@ -49,16 +62,9 @@ function fillLastLogsStore() {
 }
 
 function saveStorage() {
-  my.setStorage({
-    key: 'lastLogsStore',
-    data: logsStore,
-    success: (res) => {
-      _log('setStorage success', res)
-    },
-    fail: (error) => {
-      _error('setStorage failed: ', JSON.stringify(error))
-    },
-  })
+  storeDataWithLimit('CacheConsoleLogs', logsStore.consoleLogs)
+  // 不缓存请求，请求的数据太大
+  // storeDataWithLimit('CacheRequestLogs', logsStore.requestLogs)
 }
 
 function print(fnType, sourceLogArr) {
@@ -88,11 +94,13 @@ function print(fnType, sourceLogArr) {
       logsStore.consoleLogs = consoleLogs
     }
 
-    clearTimeout(_timeoutId)
+    if (consoleConfig.allowLogsCache) {
+      clearTimeout(_timeoutId)
 
-    _timeoutId = setTimeout(() => {
-      saveStorage()
-    }, 1000)
+      _timeoutId = setTimeout(() => {
+        saveStorage()
+      }, 1000)
+    }
   } catch (error) {
     console.error('print error', error)
   }

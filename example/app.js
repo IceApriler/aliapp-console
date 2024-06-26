@@ -15,6 +15,7 @@ App({
     this.aliAppLogsStore = initConsole({
       open: true,
       defaultVisible: true,
+      allowLogsCache: true,
     })
   },
 

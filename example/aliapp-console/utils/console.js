@@ -4,6 +4,8 @@ import {
   deepCopy,
   customStringify,
   getCurrentTime,
+  storeDataWithLimit,
+  retrieveLargeData,
 } from './utils.js'
 
 let _log = console.log
@@ -20,9 +22,9 @@ export let consoleConfig = {
   /** 是否显示左下角的调试按钮，默认隐藏 */
   defaultVisible: false,
   /** 控制台日志配置 */
-  consoleMaxLength: 100,
+  consoleMaxLength: 1000,
   /** 请求日志配置 */
-  requestMaxLength: 50,
+  requestMaxLength: 200,
 }
 export const logsStore = {
   consoleLogs: [],
@@ -30,10 +32,12 @@ export const logsStore = {
 }
 
 function fillLastLogsStore() {
-  const lastLogsStore = my.getStorageSync({ key: 'lastLogsStore' }).data
-  if (lastLogsStore) {
-    logsStore.consoleLogs = lastLogsStore.consoleLogs || []
-    logsStore.requestLogs = lastLogsStore.requestLogs || []
+  const CacheConsoleLogs = retrieveLargeData('CacheConsoleLogs') || []
+  const CacheRequestLogs = retrieveLargeData('CacheRequestLogs') || []
+
+  if (CacheConsoleLogs && CacheConsoleLogs.length) {
+    logsStore.consoleLogs = CacheConsoleLogs
+    logsStore.requestLogs = CacheRequestLogs
 
     console.light(`以上为上次打开的日志记录 ${getCurrentTime()}`)
     console.reqLight(
@@ -49,16 +53,8 @@ function fillLastLogsStore() {
 }
 
 function saveStorage() {
-  my.setStorage({
-    key: 'lastLogsStore',
-    data: logsStore,
-    success: (res) => {
-      _log('setStorage success', res)
-    },
-    fail: (error) => {
-      _error('setStorage failed: ', JSON.stringify(error))
-    },
-  })
+  storeDataWithLimit('CacheConsoleLogs', logsStore.consoleLogs)
+  storeDataWithLimit('CacheRequestLogs', logsStore.consoleLogs)
 }
 
 function print(fnType, sourceLogArr) {
